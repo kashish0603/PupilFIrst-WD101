@@ -12,6 +12,18 @@ const retrieveEntries = () => {
 }
 let userEntries = retrieveEntries();
 
+const isValidAge = (dob) => {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        return age - 1;
+    }
+    return age;
+}
+
 const displayEntries = () => {
     const entries = retrieveEntries();
     const tableEntries = entries.map((entry) => {
@@ -45,6 +57,16 @@ const saveUserForm = (event) => {
     const dob = document.getElementById("dob").value;
 
     const acceptTerms = document.getElementById("acceptTerms").checked;
+
+    if (!document.getElementById("user-form").checkValidity()) {
+        return; // If form is invalid, do not proceed
+    }
+
+    const age = isValidAge(dob);
+    if (age < 18 || age > 55) {
+        alert("You must be between 18 and 55 years old to register.");
+        return;
+    }
 
     const entry = {
         name,
